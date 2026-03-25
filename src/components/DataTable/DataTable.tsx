@@ -8,6 +8,7 @@ import {
   type SortingState,
 } from '@tanstack/react-table'
 import { useState } from 'react'
+import { Pagination } from '@/components/Pagination/Pagination'
 
 /**
  * ## DataTable
@@ -86,10 +87,6 @@ export function DataTable<T>({
     initialState: { pagination: { pageSize: limit } },
   })
 
-  const totalPages = Math.ceil(total / limit)
-  const start = (page - 1) * limit + 1
-  const end = Math.min(page * limit, total)
-
   return (
     <div>
       {/* 테이블 */}
@@ -151,49 +148,13 @@ export function DataTable<T>({
       </div>
 
       {/* 페이지네이션 */}
-      {!loading && total > 0 && (
-        <div className="flex items-center justify-between px-5 py-3 border-t border-gray-200">
-          <span className="text-xs text-gray-500">
-            {start}–{end} / {total}
-          </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => onPageChange(1)}
-              disabled={page === 1}
-              className="px-2 py-1 text-xs rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            >«</button>
-            <button
-              onClick={() => onPageChange(page - 1)}
-              disabled={page === 1}
-              className="px-2 py-1 text-xs rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            >‹</button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((p) => Math.abs(p - page) <= 2)
-              .map((p) => (
-                <button
-                  key={p}
-                  onClick={() => onPageChange(p)}
-                  className={[
-                    'w-7 h-7 text-xs rounded',
-                    p === page
-                      ? 'bg-blue-600 text-white font-medium'
-                      : 'hover:bg-gray-100 text-gray-600 cursor-pointer',
-                  ].join(' ')}
-                >{p}</button>
-              ))
-            }
-            <button
-              onClick={() => onPageChange(page + 1)}
-              disabled={page === totalPages}
-              className="px-2 py-1 text-xs rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            >›</button>
-            <button
-              onClick={() => onPageChange(totalPages)}
-              disabled={page === totalPages}
-              className="px-2 py-1 text-xs rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            >»</button>
-          </div>
-        </div>
+      {!loading && (
+        <Pagination
+          total={total}
+          page={page}
+          limit={limit}
+          onChange={onPageChange}
+        />
       )}
     </div>
   )
